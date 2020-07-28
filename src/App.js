@@ -1,26 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+import { Switch, Route, NavLink } from "react-router-dom";
+
+import ProductForm from './components/ProductForm';
+import ProductList from './components/ProductList/ProductList';
+
+import './styles.scss';
+
+import {ReactComponent as TnLogo} from './img/tn.svg';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app layout">
+      <aside>
+        <header> <TnLogo className="svg"/> </header>
+        <nav>
+          <ul>
+            <li>
+              <NavLink to="/" activeClassName="active" exact>Product List</NavLink>
+            </li>
+            <li>
+              <NavLink to="/products" activeClassName="active">Products</NavLink>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <main>
+        <header className="page-title">
+          <h1>Products</h1>
+        </header>
+        <Switch>
+          <Route exact path="/" component={ProductList}/>
+          <Route exact path="/products" component={ProductForm} />
+        </Switch>
+      </main>
     </div>
   );
 }
 
-export default App;
+export default React.memo(App);
