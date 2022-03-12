@@ -1,44 +1,65 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
+import ProductContext from "./../context/products/ProductContext";
+import { useHistory } from "react-router-dom";
+import Label from "./label/Label";
+import Input from "./input/Input";
 
 import "./components.scss";
 
-class ProductForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      product: "",
-      count: "",
-      price: "",
-      promotionalPrice: "",
-    };
+
+const ProductForm = () => {
+
+  const productContext = useContext(ProductContext);
+  const initialState = { name: "", count: "", price: "", promotionalPrice: "" }
+  const [state, setState] = useState(initialState);
+  const [localError, setLocalError] = useState({
+    isInState: false,
+  });
+  const history = useHistory();
+  const handleInputChange = (event) => {
+    const { value, name } = event.target;
+    setState({ ...state, [name]: value })
+    if (localError.isInState) {
+      setLocalError({ isInState: false });
+    }
   }
 
-  handleInputChange = (event) => {
-    return this.setState(event.target.value)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (productContext.products.some(product => product.name === state.name)) {
+      setLocalError({ isInState: true });
+    } else {
+      productContext.createProduct(state)
+      setState(initialState)
+      history.push('/')
+    }
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-  }
 
-  render() {
-    return (
-      <div className="centered">
-        <h2>Add new product</h2>
-        <div>
-          <label className="label" htmlFor="">Product name</label>
-          <input name="product" type="text" value={ this.state.product } onChange={this.handleInputChange}/>
-          <label className="label" htmlFor="">Items count</label>
-          <input name="count" type="text" value={ this.state.count } onChange={this.handleInputChange}/>
-          <label className="label" htmlFor="">Price</label>
-          <input name="price" type="text" value={ this.state.price } onChange={this.handleInputChange}/>
-          <label className="label" htmlFor="">Promotional Price</label>
-          <input name="promotionalPrice" type="text" value={ this.state.promotionalPrice } onChange={this.handleInputChange}/>
-          <input className="button" type="submit" value="Aceptar" />
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div className="centered">
+      <h2>Add new product</h2>
+      <form>
+        <Label text={"Product name"} />
+        <Input name={"name"} type="text" value={state.name} action={handleInputChange} />
+        <Label text={"Items count"} />
+        <Input name={"count"} type="number" value={state.count} action={handleInputChange} />
+        <Label text={"Price"} />
+        <Input name={"price"} type="number" value={state.price} action={handleInputChange} />
+        <Label text={"Promotional Price"} />
+        <Input name={"promotionalPrice"} type="number" value={state.promotionalPrice} action={handleInputChange} />
+
+
+        {localError.isInState &&
+          <label className="label-error">El producto ya esta en la lista</label>
+        }
+
+        <input className="button" type="submit" value="Aceptar" onClick={(e) => handleSubmit(e)} />
+
+      </form>
+    </div>
+  );
+
 }
 
 export default ProductForm;
