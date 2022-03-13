@@ -8,11 +8,12 @@ import ProductProvider from './context/products/ProductProvider';
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ProductProvider>
+    <ProductProvider>
+      <BrowserRouter>
         <App />
-      </ProductProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ProductProvider>
+
   </React.StrictMode>,
   document.getElementById("root")
 );
